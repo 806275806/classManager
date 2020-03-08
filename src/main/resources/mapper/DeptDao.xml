@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.DeptDao">
+    <resultMap id="deptmap" type="ljd.classmanager.Entity.DeptEntity">
+        <id property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <collection property="majors" ofType="ljd.classmanager.Entity.MajorEntity">
+            <id property="majorCode" column="major_code"/>
+            <result property="deptId" column="dept_id"/>
+            <result property="majorName" column="major_name"/>
+        </collection>
+    </resultMap>
+    <select id="getDept" parameterType="String" resultMap="deptmap">
+        SELECT * FROM dept a LEFT JOIN major b ON a.dept_id=b.dept_id
+    </select>
+</mapper>

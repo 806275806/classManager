@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <title>Title</title>
+    <link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/statics/bootstrap-table-master/dist/bootstrap-table.css">
+    <link rel="stylesheet" href="/statics/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/statics/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/statics/css/students.css">
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-table-master/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="/statics/js/students.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row row-position">
+        <div class="col-md-2" >
+            <h4>学生管理</h4>
+        </div>
+    </div>
+    <hr style="margin-top: 1%;"/>
+    <!--搜索栏-->
+    <div id="search-bar" class="row">
+        <div class="col-md-3">
+            <div class="center-block">
+                <span style="font-size: 15px;">年级：</span>
+                <input type="text" id="sGrade" style="width:70%;height: 34px;">&nbsp;&nbsp;
+            </div>
+        </div>
+        <div class="col-md-3">
+            <span style="font-size: 15px;">学号：</span>
+            <input type="text" id="sNo" style="width:70%;height: 34px;">&nbsp;&nbsp;
+        </div>
+        <div class="col-md-3">
+            <span style="font-size: 15px;">院系：</span>
+            <select id="deptSel" class="selectpicker" onchange="getmajor($('#majorSel'),$('#deptSel'))"></select>&nbsp;&nbsp;
+        </div>
+        <div class="col-md-3">
+            <span style="font-size: 15px;">专业：</span>
+            <select id="majorSel" class="selectpicker" onchange=""></select>&nbsp;&nbsp;
+        </div>
+        <div class="col-md-3" style="margin-top: 5px">
+            <span style="font-size: 15px;">班级：</span>
+            <input type="text" id="sClass" style="width:70%;height: 34px;">&nbsp;&nbsp;
+        </div>
+        <div class="col-md-3" style="margin-top: 5px">
+            <span style="font-size: 15px;">姓名：</span>
+            <input type="text" id="sName" style="width:70%;height: 34px;">&nbsp;&nbsp;
+        </div>
+        <div class="col-md-3" style="margin-top: 5px">
+            <span style="font-size: 15px;">性别：</span>
+            <select id="gender-sel" class="selectpicker">
+                <option value="">全部</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="col-md-3" style="margin-top: 5px">
+            <button type="button" id="search_btn" class="btn btn-default" style="color: #FFFFFF; background: #428bca">查询</button>
+        </div>
+    </div>
+    <table id="stu-tab"></table>
+    <!--表格工具栏-->
+    <div id="tab-tool">
+        <button type="button" id="add_btn" onclick="dealStu(1)" class="btn btn-default glyphicon glyphicon-plus" style="color: #FFFFFF; background: #428bca">&ensp;添加</button>
+        <button type="button" id="delete_btn" onclick="table_select()" class="btn btn-default glyphicon glyphicon-trash" style="color: #FFFFFF; background: #F73809">&ensp;批量删除</button>
+        <button type="button" id="import_btn" onclick="dealImportStu()" class="btn btn-success glyphicon glyphicon-import" >&ensp;导入</button>
+    </div>
+    <!--学生信息模态框-->
+    <div class="modal fade" id="StuModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 id="addStu_h4" class="modal-title">添加职工</h4>
+                    <h4 id="updateStu_h4" class="modal-title" style="display: none">编辑职工</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="Stu_form">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">年级：</span>
+                                <input type="text" id="sGrade-modal" name="sGrade" onchange="setclass($('#sClass-modal'),$('#major-modal'),$('#sGrade-modal'))" style="width:70%;height: 34px;">&nbsp;&nbsp;
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">&emsp;&emsp;学号：</span>
+                                <input type="text" id="sNo-modal" name="sNo" style="width:70%;height: 34px;">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">院系：</span>
+                                <select id="dept-modal" class="selectpicker" name="deptId" onchange="getmajor($('#major-modal'),$('#dept-modal'))"></select>&nbsp;&nbsp;
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">&emsp;&emsp;专业：</span>
+                                <select id="major-modal" class="selectpicker" name="majorCode" onchange="setclass($('#sClass-modal'),$('#major-modal'),$('#sGrade-modal'))"></select>
+                            </div>
+                        </div><br>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">班级：</span>
+                                <select id="sClass-modal" name="classCode" class="selectpicker"></select>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">&emsp;&emsp;姓名：</span>
+                                <input type="text" id="sName-modal" name="sName" style="width:70%;height: 34px;">
+                            </div>
+                        </div><br>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">性别：</span>
+                                <select id="sGender-modal" name="sGender" class="selectpicker">
+                                    <option value="">全部</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="modal_span_sty">联系方式：</span>
+                                <input type="text" id="sTel-modal" style="width:70%;height: 34px;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="addStu_footer" class="modal-footer">
+                    <button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button"  class="btn btn-primary" onclick="addStu()">添加</button>
+                </div>
+                <div id="updateStu_footer" class="modal-footer" style="display: none">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="updateStu()">修改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <!--导入模态框-->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 id="import_h4" class="modal-title">导入学生信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form enctype="multipart/form-data" id="files-form">
+                        <input type="file" id="inFile" name="excelFile" class="form-control" onchange=""/>
+                    </form><br>
+                        <span id="if_finish" style="color: #3c763d;font-size: larger;display: none"></span>
+                        <div id="if_error" class="alert alert-danger" style="display: none" role="alert">
+                        </div>
+                </div>
+                <div id="import_footer" class="modal-footer">
+                    <button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="import_file" class="btn btn-primary" onclick="importStu()">导入</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+</body>
+<script>
+    $('#gender-sel').selectpicker({width: '70%'});
+    $('#gender-sel').selectpicker('refresh');
+    $('#sGender-modal').selectpicker({width: '70%'});
+    $('#sGender-modal').selectpicker('refresh');
+    $('#sGrade').datetimepicker({
+        format: 'yyyy', startView : "decade", minView: 'decade',language : 'zh-CN',autoclose: true, clearBtn : true
+    });
+</script>
+</html>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.StudentsDao">
+    <select id="getStuList" parameterType="ljd.classmanager.Entity.StudentsEntity" resultType="ljd.classmanager.Entity.StudentsEntity">
+        select a.s_grade,a.s_no,b.dept_id,b.dept_name as deptName,c.major_code,c.major_name as majorName,d.class_code,d.class_name as className,a.s_name,a.s_gender,a.s_tel
+        from students a,dept b,major c,class d
+        where a.dept_id=b.dept_id and a.major_code=c.major_code and a.class_code=d.class_code
+        <if test="sGrade!=null and sGrade!=''">
+            and a.s_grade=#{sGrade}
+        </if>
+        <if test="sNo!=null and sNo!=''">
+            and a.s_no like concat(concat('%',#{sNo}),'%')
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and b.dept_id=#{deptId}
+        </if>
+        <if test="majorCode!=null and majorCode!=''">
+            and a.major_code=#{majorCode}
+        </if>
+        <if test="className!=null and className!=''">
+            and d.class_name like concat(concat('%',#{className}),'%')
+        </if>
+        <if test="sName!=null and sName!=''">
+            and a.s_name like concat(concat('%',#{sName}),'%')
+        </if>
+        <if test="sGender!=null and sGender!=''">
+            and a.s_gender=#{sGender}
+        </if>
+        <if test="sOpenid!=null and sOpenid!=''">
+            and a.s_openid=#{sOpenid}
+        </if>
+        LIMIT #{offset},#{pageNumber}
+    </select>
+    <select id="getStuListBySnoAndSname" parameterType="ljd.classmanager.Entity.StudentsEntity" resultType="ljd.classmanager.Entity.StudentsEntity">
+        select a.s_grade,a.s_no,b.dept_id,b.dept_name as deptName,c.major_code,c.major_name as majorName,d.class_code,d.class_name as className,a.s_name,a.s_gender,a.s_tel
+        from students a,dept b,major c,class d
+        where a.dept_id=b.dept_id and a.major_code=c.major_code and a.class_code=d.class_code
+        and a.s_no=#{sNo} and a.s_name=#{sName}
+        <!--<if test="sGrade!=null and sGrade!=''">-->
+            <!--and a.s_grade=#{sGrade}-->
+        <!--</if>-->
+        <!--<if test="sNo!=null and sNo!=''">-->
+            <!--and a.s_no=#{sNo}-->
+        <!--</if>-->
+        <!--<if test="deptId!=null and deptId!=''">-->
+            <!--and b.dept_id=#{deptId}-->
+        <!--</if>-->
+        <!--<if test="majorCode!=null and majorCode!=''">-->
+            <!--and a.major_code=#{majorCode}-->
+        <!--</if>-->
+        <!--<if test="className!=null and className!=''">-->
+            <!--and d.class_name like concat(concat('%',#{className}),'%')-->
+        <!--</if>-->
+        <!--<if test="sName!=null and sName!=''">-->
+            <!--and a.s_name=#{sName}-->
+        <!--</if>-->
+        <!--<if test="sGender!=null and sGender!=''">-->
+            <!--and a.s_gender=#{sGender}-->
+        <!--</if>-->
+    </select>
+    <select id="getStuCount" parameterType="ljd.classmanager.Entity.StudentsEntity" resultType="Integer">
+         select count(*)
+        from students a,dept b,major c,class d
+        where a.dept_id=b.dept_id and a.major_code=c.major_code and a.class_code=d.class_code
+        <if test="sGrade!=null and sGrade!=''">
+            and a.s_grade=#{sGrade}
+        </if>
+        <if test="sNo!=null and sNo!=''">
+            and a.s_no like concat(concat('%',#{sNo}),'%')
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and b.dept_id=#{deptId}
+        </if>
+        <if test="majorCode!=null and majorCode!=''">
+            and a.major_code=#{majorCode}
+        </if>
+        <if test="className!=null and className!=''">
+            and d.class_name like concat(concat('%',#{className}),'%')
+        </if>
+        <if test="sName!=null and sName!=''">
+            and a.s_name like concat(concat('%',#{sName}),'%')
+        </if>
+        <if test="sGender!=null and sGender!=''">
+            and a.s_gender=#{sGender}
+        </if>
+    </select>
+    <select id="getDeptByName" parameterType="String" resultType="ljd.classmanager.Entity.DeptEntity">
+        select * from dept where dept_name =#{deptName}
+    </select>
+    <select id="getMajorByName"  parameterType="String" resultType="ljd.classmanager.Entity.MajorEntity">
+        select * from major where major_name=#{majorName}
+    </select>
+    <select id="getClassByName" parameterType="String" resultType="ljd.classmanager.Entity.ClassEntity">
+        select * from class where class_name=#{className}
+    </select>
+    <select id="getStuByOpenid" parameterType="String" resultType="ljd.classmanager.Entity.StudentsEntity">
+        select a.s_grade,a.s_no,b.dept_id,b.dept_name as deptName,c.major_code,c.major_name as majorName,d.class_code,d.class_name as className,a.s_name,a.s_gender,a.s_tel
+        from students a,dept b,major c,class d
+        where a.dept_id=b.dept_id and a.major_code=c.major_code and a.class_code=d.class_code and s_openid=#{openid}
+    </select>
+</mapper>

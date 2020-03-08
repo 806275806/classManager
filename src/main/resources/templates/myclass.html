@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+		<link rel="stylesheet" href="/statics/css/index.css" />
+		<link rel="stylesheet" href="/statics/css/myclass.css" />
+		<link rel="stylesheet" href="/statics/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+		<link rel="stylesheet" href="/statics/bootstrap-table-master/dist/bootstrap-table.css">
+		<link rel="stylesheet" href="/statics/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css">
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+		<script type="text/javascript" src="statics/bootstrap-table-master/dist/bootstrap-table.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8" charset="UTF-8"></script>
+		<script type="text/javascript" src="/statics/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="/statics/js/vue.js"></script>
+		<script type="text/javascript" src="/statics/js/myclass.js"></script>
+		<title>我的课程</title>
+	</head>
+
+	<body>
+		<div class="container-fluid">
+			<div class="row row-position">
+				<div class="col-md-2">
+					<h4>我的课程</h4>
+					<a id="userCode" href="#" th:text="${session.userCode}" style="display: none"></a>
+				</div>
+				<div class="col-md-7"></div>
+				<div id="course-header" style="float: right;">
+					<a class="glyphicon glyphicon-tasks" href="# " @click="getEndCourseList()">&ensp;课程归档</a>&nbsp; &nbsp; &nbsp;
+					<button type="button" class="glyphicon glyphicon-plus btn btn-primary" @click="dealType(1)">&ensp;新建课程</button>
+				</div>
+			</div>
+			<hr style="margin-top: 1%;" />
+			<div id="xa" v-cloak class="row" style="padding-left: 3%">
+				<div v-for="courseItem,index in CourseList" id="course-panel" class="col-md-3">
+					<ul class="list-group" style="width: 90%;">
+						<li class="list-group-item li-bk">
+							<div style="padding: 0.5% 0.5%;">
+								<a href="#" @click="toCourseDetail(courseItem)">
+									<h4 id="courseName"  style="color: #FFFFff;">{{courseItem.courseName}}</h4>
+								</a>
+									<select ref="class_sel" :id="courseItem.courseCode" @change="getNickName($event,index)" style="background: none;border: none;font-size: 15px;color: #FFFFff">
+										<option  v-for="classItem,index in courseItem.classes" :value="classItem.classNickname" style="color: #0a0a0a">{{classItem.classNickname}}</option>
+									</select><br>
+									<p style="float: right;color: #FFFFFF;">{{courseItem.courseTerm.substring(0,9)}}<br>{{courseItem.courseTerm.substring(9)}}</p>
+									<br />
+									<br />
+							</div>
+						</li>
+						<li class="list-group-item" style="height: 40px">
+							<div v-for="classItem2,index2 in courseItem.classes.slice(0,1)">
+								<span v-if="ClassNickName===''" style="font-size: 15px" class="glyphicon glyphicon-user">&emsp;成员：{{getStuNum(courseItem.courseCode,classItem2.classNickname)}}人</span>
+								<span v-else-if="ClassNickName!==''&& index0===index" style="font-size: 15px" class="glyphicon glyphicon-user">&emsp;成员：{{getStuNum(courseItem.courseCode,course.ClassNickName)}}人</span>
+								<span v-else class="glyphicon glyphicon-user" style="font-size: 15px">&nbsp;成员：{{getStuNum(courseItem.courseCode,classItem2.classNickname)}}人</span>
+							<div class="btn-group dropup" style="float: right">
+								<!--<button type="button" class="btn btn-default">更多</button>-->
+								<a href="#" class="dropdown-toggle a-forMore"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多···</a>
+								<!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="glyphicon glyphicon-pencil" @click="EditCourse(courseItem)">&ensp;编辑</a>
+									</li>
+									<li role="separator " class="divider"></li>
+									<li>
+										<a @click="DelCourse(courseItem)" class="glyphicon glyphicon-trash">&ensp;删除</a>
+									</li>
+									<li role="separator " class="divider"></li>
+									<li>
+										<a class="glyphicon glyphicon-book" @click="EndCourse(courseItem)">&ensp;结课/归档</a>
+									</li>
+								</ul>
+							</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<!--新建、编辑课程模态框-->
+				<div class="modal fade" id="CourseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog" style="width: 800px">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 id="addCourse_h4" class="modal-title">新建课程</h4>
+								<h4 id="updateCourse_h4" class="modal-title" style="display: none">编辑课程</h4>
+							</div>
+							<div class="modal-body">
+								<form id="User_form">
+									<div class="row">
+										<div class="col-sm-6">
+
+											<span class="label-modal">课程编号</span>
+											<input type="text" class="input-modal" style="display: none" v-model="modal_CourseCode_0" id="courseCode-modal_0" name="courseCode"  placeholder="请输入课程编号" aria-describedby="sizing-addon2" >
+											<input type="text" class="input-modal" style="width: 76%" v-model="modal_CourseCode" id="courseCode-modal" name="courseCode"  placeholder="请输入课程编号" aria-describedby="sizing-addon2">
+										</div>
+										<div class="col-sm-6">
+											<span class="label-modal">课程名称</span>
+											<input type="text" class="input-modal"  id="courseName-modal" v-model="modal_CourseName" style="width: 76%" name="courseName"  placeholder="请输入课程名称" aria-describedby="sizing-addon2">
+										</div>
+									</div><br>
+									<div class="input-group">
+										<span class="input-group-addon" >课程类型</span>
+										<select class="selectpicker form-control" title="请选择课程类型" style="width: 80%" id="courseType" >
+											<option value="必修">必修</option>
+											<option value="选修">选修</option>
+										</select>
+									</div><br>
+									<div class="row">
+										<span class="label-modal" >&nbsp;&nbsp;&nbsp;&emsp;&emsp;学期</span>
+										<input type="number"  id="years-1" name="" class="input-modal" @change="yearsChange()" placeholder="请输入学年">&nbsp;—&nbsp;
+										<input type="number"  id="years-2" name="" class="input-modal"  placeholder="请输入学年">&nbsp;学年度&nbsp;
+										<select type="text" class="selectpicker" id="term" title="请选择学期" style="float: left">
+											<option value="第一学期"  >第一学期</option>
+											<option value="第二学期"  >第二学期</option>
+										</select>
+									</div><br>
+									<div class="input-group">
+										<span class="input-group-addon" >上课班级</span>
+										<a href="#" class="glyphicon glyphicon-plus btn btn-success" @click="addClasses()">添加上课班级</a>
+									</div>
+									<div  v-for="(item,i) of  classItems" :key="i">
+									<div v-if="item==1">
+									<div class="row" style="margin-top: 5px">
+										<div class="col-sm-3">&nbsp;&nbsp;
+											<span class="label-modal" style="color: #449d44" >&nbsp;班级{{i+1}}</span>
+											<input type="text"  class="input-modal-2 grade" ref="classGrade" placeholder="年级">&nbsp;&nbsp;</div>
+										<div class="col-sm-4">
+											<!--院系选择框-->
+											<select type="text" class="selectpicker  dept-change" ref="depts" title="请选择院系" @change="deptHaveChange($event,i)">
+												<option v-for="deptItem,index in deptToItems[i]" v-if="index>=1" :value="deptItem.deptId"  >{{deptItem.deptName}}</option>
+										</select>&nbsp;&nbsp;
+										</div>
+											<select type="text" class="selectpicker  major-change" ref="major" title="请选择专业" @change="majorHaveChange($event,i)">
+												<option v-for="majorItem,index in majorsToItems[i]"  :value="majorItem.majorCode"  >{{majorItem.majorName}}</option>
+											</select>&nbsp;&nbsp;&emsp;&emsp;
+											<a href="#" class="glyphicon glyphicon-trash " @click="delclasses(i)" style="color: #ff3f1d">移除</a>
+									</div>
+									<div class="row">
+										<div class="col-sm-6" style="margin-top: 5px">
+											<span class="label-modal" style="color: #FFFFff" >&nbsp;&nbsp;&nbsp;&emsp;年级</span>
+											<select  type="text" ref="classes" multiple class="selectpicker class-change" title="请选择班级（可多选）" id="class" >
+												<option v-for="Item,index in classToItems[i]"  :value="Item.classCode"  >{{Item.className}}</option>
+											</select>&nbsp;&nbsp;
+										</div>
+										<div class="col-sm-6" style="margin-top: 5px">
+											<input type="text"  id="classNickName" name="" ref="classNickName" class="input-modal-3"  placeholder="请输入班级简称（如：16软工5、6班）">&nbsp;&nbsp;
+										</div>
+									</div>
+										<div class="row" v-if="i+1<classItems.length" style="padding: 0px 25px 0px 25px"><hr style="margin-top: 1%;color: #DDFA6B" /></div>
+									</div>
+									</div>
+								</form>
+							</div>
+							<div id="addCourse_footer" class="modal-footer">
+								<button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+								<button type="button"  class="btn btn-primary" @click="addCourse()">添加</button>
+							</div>
+							<div id="updateCourse_footer" class="modal-footer" style="display: none">
+								<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								<button type="button" class="btn btn-primary" @click="EditCourseSubmit()">修改</button>
+							</div>
+						</div><!-- /.modal-content -->
+					</div><!-- /.modal -->
+				</div>
+		</div>
+			<!--课程归档模态框-->
+			<div class="modal fade" id="EndCourseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="width: 90%" >
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4  class="modal-title">课程归档</h4>
+						</div>
+						<div class="modal-body" style=" max-height:90%;overflow-y:auto;">
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									查询条件
+								</div>
+								<div class="panel-body">
+									<span class="label-modal">&nbsp;&nbsp;&nbsp;学期</span>
+									<input type="number"  id="years-1-end" name="" class="input-modal" @change="yearsChange()" placeholder="请输入学年">&nbsp;—&nbsp;
+									<input type="number"  id="years-2-end" name="" class="input-modal"  placeholder="请输入学年">&nbsp;学年度&nbsp;
+									<select type="text" class="selectpicker" id="term-end" title="请选择学期" style="float: left">
+										<option value="第一学期"  >第一学期</option>
+										<option value="第二学期"  >第二学期</option>
+									</select>
+									&emsp;&emsp;&emsp;<button type="button" class="glyphicon glyphicon-search btn btn-primary" @click="searchEndCourse()">查询</button>
+								</div>
+							</div>
+							<hr>
+							<div v-for="courseItem,index in endCourseList"  class="col-md-3">
+								<ul class="list-group" style="width: 90%;">
+									<li class="list-group-item li-bk">
+										<div style="padding: 0.5% 0.5%;">
+											<a href="../..">
+												<h4 style="color: #FFFFff;">{{courseItem.courseName}}</h4>
+											</a>
+											<select :id="courseItem.courseCode" @change="getNickName($event,index)" style="background: none;border: none;font-size: 15px;color: #FFFFff">
+												<option  v-for="classItem,index in courseItem.classes" :value="classItem.classNickname" style="color: #0a0a0a">{{classItem.classNickname}}</option>
+											</select><br>
+											<p style="float: right;color: #FFFFFF;">{{courseItem.courseTerm.substring(0,9)}}<br>{{courseItem.courseTerm.substring(9)}}</p>
+											<br />
+											<br />
+										</div>
+									</li>
+									<li class="list-group-item" style="height: 40px">
+										<div v-for="classItem2,index2 in courseItem.classes.slice(0,1)">
+											<span v-if="ClassNickName===''" style="font-size: 15px" class="glyphicon glyphicon-user">&emsp;成员：{{getStuNum(courseItem.courseCode,classItem2.classNickname)}}人</span>
+											<span v-else-if="ClassNickName!==''&& index0===index" style="font-size: 15px" class="glyphicon glyphicon-user">&emsp;成员：{{getStuNum(courseItem.courseCode,course.ClassNickName)}}人</span>
+											<span v-else class="glyphicon glyphicon-user" style="font-size: 15px">&nbsp;成员：{{getStuNum(courseItem.courseCode,classItem2.classNickname)}}人</span>
+											<div class="btn-group dropup" style="float: right">
+												<!--<button type="button" class="btn btn-default">更多</button>-->
+												<a href="#" class="dropdown-toggle a-forMore"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多···</a>
+												<!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+												<span class="sr-only">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu">
+													<!--<li>-->
+													<!--<a class="glyphicon glyphicon-pencil" @click="EditCourse(courseItem)">&ensp;编辑</a>-->
+													<!--</li>-->
+													<!--<li role="separator " class="divider"></li>-->
+													<li>
+													<a @click="DelCourse(courseItem)" class="glyphicon glyphicon-trash">&ensp;删除</a>
+													</li>
+													<li role="separator " class="divider"></li>
+													<li>
+														<a class="glyphicon glyphicon-book" @click="setCourseNotEnd(courseItem)">&ensp;取消归档</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+						</div>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+		</div>
+
+	</body>
+</html>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.UserDao">
+    <resultMap id="map" type="ljd.classmanager.Entity.UserEntity">
+        <id property="userCode" column="userCode"/>
+        <collection property="roles" ofType="ljd.classmanager.Entity.RoleEntity">
+            <id property="roleId" column="roleId"/>
+            <result property="role" column="role"/>
+            <collection property="permissionEntities" ofType="ljd.classmanager.Entity.PermissionEntity">
+                <id property="permId" column="permId"/>
+                <result property="permName" column="permName"/>
+                <result property="permUrl" column="permUrl"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <!--<resultMap id="getUserListMap" type="ljd.classmanager.Entity.UserEntity">-->
+        <!--<id property="userCode" column="user_code"/>-->
+        <!--<result property="userName" column="user_name"/>-->
+        <!--<result property="userGender" column="user_gender"/>-->
+        <!--<result property="userTel" column="user_tel"/>-->
+        <!--<result property="deptName" column="deptName"/>-->
+        <!--<collection property="roles" ofType="ljd.classmanager.Entity.RoleEntity">-->
+            <!--<id property="roleId" column="role_id"/>-->
+            <!--<result property="role" column="role"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
+    <select id="Byusername" parameterType="String" resultType="ljd.classmanager.Entity.UserEntity">
+        select * from user where user_code=#{userCode}
+    </select>
+    <select id="findByRolePerm" parameterType="String" resultMap="map">
+        select a.user_code,c.role_id as roleId,c.role as roleName,e.perm_id as permId,e.perm_name as permName,e.perm_url as permUrl
+        from user a,user_role b,role c,role_permission d,permission e
+        where a.user_code=b.user_code and c.role_id=b.role_id and d.role_id=c.role_id and e.perm_id=d.perm_id
+        and a.user_code=#{userCode}
+    </select>
+    <select id="getUserList" parameterType="ljd.classmanager.Entity.UserEntity" resultType="ljd.classmanager.Entity.UserEntity">
+        SELECT a.user_code,a.dept_id,d.dept_name as deptName,a.user_name,a.user_gender,a.user_tel,
+        GROUP_CONCAT(b.role_id ORDER BY b.role_id) haveRole,GROUP_CONCAT(b.role ORDER BY b.role) roleName
+        FROM `user` a,role b,user_role c,dept d
+        WHERE a.user_code=c.user_code AND b.role_id=c.role_id AND a.dept_id=d.dept_id
+        <if test="userCode!=null and userCode!=''">
+            and a.user_code=#{userCode}
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and a.dept_id=#{deptId}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and a.user_name like concat(concat('%',#{userName}),'%')
+        </if>
+        <if test="userGender!=null and userGender!=''">
+            and a.user_gender=#{userGender}
+        </if>
+        GROUP BY a.user_code
+        <if test="haveRole!=null and haveRole!=''">
+            HAVING GROUP_CONCAT(b.role_id ORDER BY b.role_id)=#{haveRole}
+        </if>
+        LIMIT #{offset},#{pageNumber}
+    </select>
+    <select id="getUserTotal" resultType="Integer">
+        SELECT COUNT(*)FROM(SELECT COUNT(DISTINCT a.user_code)
+        FROM `user` a,role b,user_role c,dept d
+        WHERE a.user_code=c.user_code AND b.role_id=c.role_id AND a.dept_id=d.dept_id
+        <if test="userCode!=null and userCode!=''">
+            and a.user_code=#{userCode}
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and a.dept_id=#{deptId}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and a.user_name like concat(concat('%',#{userName}),'%')
+        </if>
+        <if test="userGender!=null and userGender!=''">
+            and a.user_gender=#{userGender}
+        </if>
+        GROUP BY a.user_code
+        <if test="haveRole!=null and haveRole!=''">
+        HAVING GROUP_CONCAT(b.role_id ORDER BY b.role_id)=#{haveRole}
+        </if>
+        ) as t
+    </select>
+    <insert id="addUser" parameterType="ljd.classmanager.Entity.UserEntity">
+        insert into user
+        values (#{userCode},#{userPassword},#{deptId},#{userName},#{userGender},#{userTel},#{userOpenid})
+    </insert>
+    <!--<select id="getpro" parameterType="ljd.classmanager.Entity.UserEntity" statementType="CALLABLE" resultType="ljd.classmanager.Entity.UserEntity">-->
+        <!--{-->
+        <!--call dealRole(-->
+        <!--#{userCode,mode=IN,jdbcType=VARCHAR},-->
+        <!--#{haveRoleId,mode=IN,jdbcType=INTEGER}-->
+        <!--)-->
+        <!--}-->
+    <!--</select>-->
+    <update id="updateUser" parameterType="ljd.classmanager.Entity.UserEntity">
+        {
+        call dealRole(
+        #{userCode,mode=IN,jdbcType=VARCHAR},
+        #{haveRoleId,mode=IN,jdbcType=INTEGER}
+        )
+        }
+    </update>
+</mapper>

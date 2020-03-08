@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.CourseofStuDao">
+    <select id="getAttendnceStu" parameterType="String" resultType="ljd.classmanager.Entity.CourseOfStuEntity">
+        SELECT  a.*,c.s_name AS sName,f.class_name AS className,e.dept_name AS deptName,b.attendance_id AS attendanceId ,b.attendance_type AS attendanceType,
+        b.attendance_result AS attendanceResult,b.attendance_date AS attendanceDate,b.attendance_class AS attendanceClass
+        FROM students c,attendance_history d,dept e,class f,course_of_stu a
+        LEFT JOIN attendance b
+        ON (a.s_no=b.s_no AND a.course_code=b.course_code)
+        where a.course_code=#{courseCode} AND b.attendance_id=#{attendanceId}
+        AND a.s_no=c.s_no AND b.attendance_id=d.attendance_id AND c.dept_id=e.dept_id AND a.class_code=f.class_code
+        <if test="classNickname!=null and classNickname!=''">
+            AND a.class_nickname=#{classNickname}
+        </if>
+        <if test='attendanceResult != null and  attendanceResult!="" and attendanceResult !=  "假"'>
+            and b.attendance_result=#{attendanceResult}
+        </if>
+        <if test= 'attendanceResult ==  "假" ' >
+        and b.attendance_result like concat(concat('%',#{attendanceResult}),'%')
+        </if>
+        <if test= 'sNo !=  null and sNo != "" ' >
+            and a.s_no like concat(concat('%',#{sNo}),'%')
+        </if>
+        ORDER BY FIELD(b.attendance_result,'旷课','未签到','迟到','请假','已签到'),a.s_no
+    </select>
+    <select id="getAttendnceStuToHistory" parameterType="ljd.classmanager.Entity.CourseOfStuEntity" resultType="ljd.classmanager.Entity.CourseOfStuEntity">
+        SELECT  a.*,c.s_name AS sName,f.class_name AS className,e.dept_name AS deptName,b.attendance_id AS attendanceId ,b.attendance_type AS attendanceType,
+        b.attendance_result AS attendanceResult,b.attendance_date AS attendanceDate,b.attendance_class AS attendanceClass
+        FROM students c,attendance_history d,dept e,class f,course_of_stu a
+        LEFT JOIN attendance b
+        ON (a.s_no=b.s_no AND a.course_code=b.course_code)
+        where a.course_code=#{courseCode} AND b.attendance_id=#{attendanceId}
+        AND a.s_no=c.s_no AND b.attendance_id=d.attendance_id AND c.dept_id=e.dept_id AND a.class_code=f.class_code
+        <if test="classNickname!=null and classNickname!=''">
+            AND a.class_nickname=#{classNickname}
+        </if>
+        <if test='attendanceResult != null and  attendanceResult!="" '>
+            and b.attendance_result=#{attendanceResult}
+        </if>
+        <if test= 'sNo !=  null and sNo != "" ' >
+            and a.s_no like concat(concat('%',#{sNo}),'%')
+        </if>
+        ORDER BY FIELD(b.attendance_result,'旷课','未签到','迟到','请假','已签到'),a.s_no
+        LIMIT #{offset},#{pageNumber}
+    </select>
+    <select id="getAttendanceStuCount" parameterType="ljd.classmanager.Entity.CourseOfStuEntity" resultType="Integer">
+        SELECT  count(*)
+        FROM students c,attendance_history d,dept e,class f,course_of_stu a
+        LEFT JOIN attendance b
+        ON (a.s_no=b.s_no AND a.course_code=b.course_code)
+        where a.course_code=#{courseCode} AND b.attendance_id=#{attendanceId}
+        AND a.s_no=c.s_no AND b.attendance_id=d.attendance_id AND c.dept_id=e.dept_id AND a.class_code=f.class_code
+        <if test="classNickname!=null and classNickname!=''">
+            AND a.class_nickname=#{classNickname}
+        </if>
+        <if test='attendanceResult != null and  attendanceResult!=""'>
+            and b.attendance_result=#{attendanceResult}
+        </if>
+        <if test= 'sNo !=  null and sNo != "" ' >
+            and a.s_no like concat(concat('%',#{sNo}),'%')
+        </if>
+        ORDER BY FIELD(b.attendance_result,'旷课','未签到','迟到','请假','已签到'),a.s_no
+    </select>
+    <select id="getCourseStu" parameterType="String" resultType="ljd.classmanager.Entity.CourseOfStuEntity">
+        SELECT a.*,b.course_code as courseCode,c.dept_name as deptName,d.class_name as className FROM students a,course_of_stu b,dept c,class d
+        WHERE a.s_no=b.s_no AND a.dept_id=c.dept_id AND a.class_code=d.class_code
+        AND b.course_code=#{courseCode} AND b.class_nickname=#{classNickname}
+    </select>
+</mapper>

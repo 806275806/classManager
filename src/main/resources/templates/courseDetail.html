@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>滑动菜单</title>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="statics/bootstrap-table-master/dist/bootstrap-table.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8" charset="UTF-8"></script>
+    <script type="text/javascript" src="/statics/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <!--<script type="text/javascript" src="/statics/bootstrap-tab-master/js/bootstrap-tab.js"></script>-->
+    <script type="text/javascript" src="/statics/js/courseDetail.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-tab-master/js/bootstrap-tab.js"></script>
+    <link rel="stylesheet" href="/statics/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/statics/bootstrap-tab-master/css/bootstrap-tab.css">
+    <link rel="stylesheet" href="/statics/bootstrap-tab-master/sample/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/statics/bootstrap-table-master/dist/bootstrap-table.css">
+    <link rel="stylesheet" href="/statics/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/statics/css/courseDetail.css">
+    <link rel="stylesheet" href="/statics/css/style.css" />
+
+</head>
+
+<body onload="loadClassInfo()">
+<div id="course-detail">
+<div class="container-fluid">
+<!-- 侧滑菜单 -->
+<div id="wrapper">
+    <div class="overlay"></div>
+
+    <!-- Sidebar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+        <ul class="nav sidebar-nav">
+            <li class="sidebar-brand">
+                <a id="courseName_slide" href="#">
+
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-fw "></i><span class="glyphicon glyphicon-calendar "></span> 课堂考勤 <span class="caret"></span>&emsp;</a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="../../toHistory" style="font-size: 13px">考勤历史</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-fw "></i> <span class="glyphicon glyphicon-pencil"></span>&nbsp;随堂练习&nbsp;&nbsp;&nbsp;&emsp;</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-fw "></i><span class="glyphicon glyphicon-user"></span>&nbsp;学生管理&nbsp;&nbsp;&nbsp;&emsp;</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-fw "></i> <span class="glyphicon glyphicon-list-alt"></span>&nbsp;布置作业&nbsp;&nbsp;&nbsp;&emsp;</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-fw "></i> <span class="glyphicon glyphicon-level-up"></span>&nbsp;上传课件&nbsp;&nbsp;&nbsp;&emsp;</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-fw "></i> <span class="glyphicon glyphicon-menu-left"></span>&nbsp;返回上层&nbsp;&nbsp;&nbsp;&emsp;</a>
+            </li>
+        </ul>
+    </nav>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="row row-position" style="box-shadow: 4px 4px 4px #D5D5D5;">
+        <div class="col-sm-1">
+        <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+            <span class="hamb-top"></span>
+            <span class="hamb-middle"></span>
+            <span class="hamb-bottom"></span>
+        </button>
+        </div>
+        <ol class="breadcrumb col-sm-11" style="background: #ffffff">
+            <li><a href="../../">我的课程</a></li>
+            <li class="active"><a href="#">课堂考勤</a></li>
+            <!--<li class="active">Data</li>-->
+        </ol>
+        </div>
+        <hr style="margin-top: 0px;">
+        <div>
+            <div>
+                <ul class="list-group" style="width: 95%;height:150px;margin:0 auto">
+                    <li class="list-group-item li-bk" style="border-radius:15px;">
+                        <div style="padding: 0.5% 0.5%;">
+                            <a href="#">
+                                <h1 style="display: none; color: #FFFFff;">
+                                    <span id="courseCode"></span>
+                                </h1>
+                                <h1 style="color: #FFFFff;">
+                                    <span id="courseName"></span>
+                                </h1>
+                            </a>
+                            <select id="classes" onchange="toCourseDetail()" style="background: none;border: none;font-size: 25px;color: #FFFFff">
+                                <!--<option  style="color: #0a0a0a">16软工5、6班</option>-->
+                            </select>
+                            <br><br>
+                            <div class="row">
+                            <span id="num" style="float:left;margin-left:2%;margin-top:10px;font-size: 20px;color: #FFFFff" class="glyphicon glyphicon-user">&emsp;成员：n人</span>
+                            <p style="float: right;color: #FFFFFF;">
+                                <span id="year"></span>
+                                <br><span id="term"></span>
+                            </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item " style="border: none;color: red;font-weight: bold"><span class="glyphicon glyphicon-time"></span>距离页面刷新时间:<span id="timer">60</span>s</li>
+                    <li class="list-group-item " style="border: none">
+                        <button type="button" class="btn btn-success" style="font-size: 15px" onclick="openSignInModal()">开始考勤</button>
+                        <button type="button" class="btn btn-success" style="font-size: 15px" onclick="Signout()">开始签退</button>
+                        <button type="button" class="btn btn-success" style="font-size: 15px" onclick="mamualAttend()">手动考勤</button>
+                        <button type="button" class="btn btn-success" style="font-size: 15px" onclick="submitAttendance()">提交考勤</button>
+                        <div style="float: right">
+                        <input id="sNo_input" type="number" class="input-modal" placeholder="请输入学号搜索学生"/>
+                        <button type="button" class="btn btn-success" style="font-size: 15px" onclick="getStuIncourse()">搜索</button>
+                        </div>
+                    </li>
+                    <li class="list-group-item " style="border: none">
+                        <div id="tabContainer"></div>
+                        <div id="tabContainerSel" style="display: none"></div>
+                    </li>
+                </ul>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    <!-- 签到模态框（Modal） -->
+    <div class="modal fade" id="signInModal"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="true">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content" style="background-image: url(https://s2.ax1x.com/2020/02/29/36yQcn.jpg)">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">课堂考勤</h4>
+                <input class="modal-title" style="display: none" id="isAttendance"/>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!--<div class="col-sm-1"></div>-->
+                    <div class="col-sm-6" style="padding-left: 40px">
+                        <span style="font-weight: bold;font-size: 30px">请扫描二维码签到：</span><br>
+                        <iframe id="QRCode_frame" class="embed-responsive-item" style="width: 400px;height: 400px;border: none;z-index: -1" ></iframe>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row"></div>
+                        <div class="row"></div>
+                        <div class="row" style="font-weight: bold;font-size: 30px">&emsp;&emsp;已考勤人数</div>
+                        <div class="row">
+                            <span style="font-weight: bold;font-size: 40px;color: #0e90d2;">&emsp;&emsp;</span>
+                            <!--签到人数-->
+                            <span id="signInStuNum" style="font-weight: bold;font-size: 40px;color: #0e90d2;">0</span>
+                            <span style="font-weight: bold;font-size: 40px">/</span>
+                            <!--班级总人数-->
+                            <span id="courseStuNum" style="font-weight: bold;font-size: 40px"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" th:onclick="modalHide()" >关闭</button>
+                    <button type="button" class="btn btn-primary">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+    <!--签退的模态框-->
+    <div class="modal fade" id="signOutModal"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="true">
+        <div class="modal-dialog" style="width: 80%;">
+            <div class="modal-content" style="background-image: url(https://s2.ax1x.com/2020/02/29/36yQcn.jpg)">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" >课堂考勤</h4>
+                    <!--<input class="modal-title" style="display: none"/>-->
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!--<div class="col-sm-1"></div>-->
+                        <div class="col-sm-6" style="padding-left: 40px">
+                            <span style="font-weight: bold;font-size: 30px">请扫描二维码签到：</span><br>
+                            <iframe id="QRCode_frame_ofSignOut" class="embed-responsive-item" style="width: 400px;height: 400px;border: none;z-index: -1" ></iframe>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="row"></div>
+                            <div class="row"></div>
+                            <div class="row" style="font-weight: bold;font-size: 30px">&emsp;&emsp;已考勤人数</div>
+                            <div class="row">
+                                <span style="font-weight: bold;font-size: 40px;color: #0e90d2;">&emsp;&emsp;</span>
+                                <!--签到人数-->
+                                <span id="signOutStuNum" style="font-weight: bold;font-size: 40px;color: #0e90d2;">0</span>
+                                <span style="font-weight: bold;font-size: 40px">/</span>
+                                <!--班级总人数-->
+                                <span id="courseStuNum_Out" style="font-weight: bold;font-size: 40px"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" th:onclick="hideModal()">关闭</button>
+                        <button type="button" class="btn btn-primary">提交更改</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+<script src="/statics/js/huadong.js"></script>
+</html>

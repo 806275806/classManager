@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.ClassDao">
+
+    <select id="getClassList" resultType="ljd.classmanager.Entity.ClassEntity">
+        SELECT c.class_code,a.dept_name,b.dept_id,b.major_code,b.major_name,c.class_grade,c.class_name
+        FROM dept a,major b,class c
+        where a.dept_id=b.dept_id and b.major_code=c.major_code
+        <if test="classGrade!=null and classGrade!=''">
+            and c.class_grade=#{classGrade}
+        </if>
+        <if test="majorCode!=null and majorCode!=''">
+            and b.major_code=#{majorCode}
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and b.dept_id=#{deptId}
+        </if>
+        <if test="className!=null and className!=''">
+            and c.class_name like concat(concat('%',#{className}),'%')
+        </if>
+        LIMIT #{offset},#{pageNumber}
+    </select>
+    <select id="getTotal" resultType="int">
+        SELECT count(1)
+        FROM dept a,major b,class c
+        where a.dept_id=b.dept_id and b.major_code=c.major_code
+        <if test="classGrade!=null and classGrade!=''">
+            and c.class_grade=#{classGrade}
+        </if>
+        <if test="majorCode!=null and majorCode!=''">
+            and b.major_code=#{majorCode}
+        </if>
+        <if test="deptId!=null and deptId!=''">
+            and b.dept_id=#{deptId}
+        </if>
+        <if test="className!=null and className!=''">
+            and c.class_name like concat(concat('%',#{className}),'%')
+        </if>
+    </select>
+    <select id="getClasstoSel" resultType="ljd.classmanager.Entity.ClassEntity">
+        select *from class where 1=1
+        <if test="majorCode!=null and majorCode!=''">
+            and major_code=#{majorCode}
+        </if>
+        <if test="classGrade!=null and classGrade!=''">
+            and class_grade=#{classGrade}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+</head>
+<body onload="loadQRCode()">
+<div>
+    <img id="QRCode" style="width: 400px;height: 400px">
+    <div>
+    </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+    var attendanceId = [[${attendanceId}]];
+    var signInType = [[${signInType}]];
+    // var classNickName=sessionStorage.getItem("selectedNickName");
+    function loadQRCode(){
+        var num=sj();
+        setInterval(function(){
+            window.location.reload()
+        }, 2000);
+        // alert(num);
+            $.ajax({
+                type: "GET",
+                url: '../../qrcode/getQRCode' ,
+                async:false,
+                contentType: "application/json",
+                data: {
+                    value:'http://172.20.10.6:8080/wechat/toWechatScan?attendanceId='+attendanceId+'&signInType='+signInType+'&num='+num
+                },
+                success: function (r) {
+                    // alert('111');
+                    $('#QRCode').attr('src',r);
+                }
+            });
+    }
+    function sj() {
+        var x = 100;
+        var y = 0;
+        var rand = parseInt(Math.random() * (x - y + 1) + y);
+        return rand;
+    }
+</script>
+</html>

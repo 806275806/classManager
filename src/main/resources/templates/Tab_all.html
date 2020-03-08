@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="statics/bootstrap-table-master/dist/bootstrap-table.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8" charset="UTF-8"></script>
+    <script type="text/javascript" src="/statics/js/showStuInfo.js"></script>
+    <script type="text/javascript" src="/statics/js/Tab_all.js"></script>
+    <script type="text/javascript" src="/statics/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="/statics/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/statics/bootstrap-table-master/dist/bootstrap-table.css">
+    <link rel="stylesheet" href="/statics/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/statics/css/courseDetail.css">
+    <link rel="stylesheet" href="/statics/css/style.css" />
+</head>
+<body>
+<div class="row">
+    <!--/*@thymesVar id="attendnceStuList" type="List"*/-->
+    <div th:each="stuItem,start:${attendnceStuList}" class="col-sm-2">
+        <!--)-->
+        <!--'javascript:getStuInfo(\''+${attendnceStuList}+'\',\''+${stuItem}+'\','+${start}+'\');'-->
+        <span id="stuOne" th:onclick="getStuInfo([[${attendnceStuList}]],[[${stuItem}]],[[${start}]],[[${attendanceResult+'-modal'}]])">
+        <ul class="list-group" style="margin-top: 10px">
+            <li class="list-group-item" style="border: none">
+                <img src="/statics/img/zjz.JPG" width="100%">
+            </li>
+            <li class="list-group-item" style="text-align: center;margin-top: -15px;border: none">
+                <div  style="margin-top: 10px;" th:if="${stuItem.attendanceResult eq '未签到'}">
+                <!--<div  style="margin-top: 10px;color: #3e8f3e" th:if="${stuItem.attendanceResult eq '已签到'}">-->
+                <!--<div  style="margin-top: 10px;color: #985f0d" th:if="${stuItem.attendanceResult eq '迟到'}">-->
+                <!--<div  style="margin-top: 10px;color: #802420" th:if="${stuItem.attendanceResult eq '请假'}">-->
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuItem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select style="border: none">
+                        <option th:selected="${stuItem.attendanceResult eq '未签到'}" value="未签到">未签到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '正常'}" value="正常">正常</option>
+                        <option th:selected="${stuItem.attendanceResult eq '迟到'}" value="迟到">迟到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '病假'}" value="病假">病假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '事假'}" value="事假">事假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '旷课'}" value="旷课">旷课</option>
+                    </select>
+                </div>
+                <div  style="margin-top: 10px;color: red" th:if="${stuItem.attendanceResult eq '旷课'}">
+                <!--<div  style="margin-top: 10px;color: #3e8f3e" th:if="${stuItem.attendanceResult eq '已签到'}">-->
+                    <!--<div  style="margin-top: 10px;color: #985f0d" th:if="${stuItem.attendanceResult eq '迟到'}">-->
+                    <!--<div  style="margin-top: 10px;color: #802420" th:if="${stuItem.attendanceResult eq '请假'}">-->
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuItem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select style="border: none">
+                        <option th:selected="${stuItem.attendanceResult eq '未签到'}" value="未签到">未签到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '正常'}" value="正常">正常</option>
+                        <option th:selected="${stuItem.attendanceResult eq '迟到'}" value="迟到">迟到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '病假'}" value="病假">病假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '事假'}" value="事假">事假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '旷课'}" value="旷课">旷课</option>
+                    </select>
+                </div>
+                <div  style="margin-top: 10px;color: #F79709" th:if="${stuItem.attendanceResult eq '迟到'}">
+                <!--<div  style="margin-top: 10px;color: #3e8f3e" th:if="${stuItem.attendanceResult eq '已签到'}">-->
+                    <!--<div  style="margin-top: 10px;color: #985f0d" th:if="${stuItem.attendanceResult eq '迟到'}">-->
+                    <!--<div  style="margin-top: 10px;color: #802420" th:if="${stuItem.attendanceResult eq '请假'}">-->
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuItem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select style="border: none">
+                        <option th:selected="${stuItem.attendanceResult eq '未签到'}" value="未签到">未签到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '正常'}" value="正常">正常</option>
+                        <option th:selected="${stuItem.attendanceResult eq '迟到'}" value="迟到">迟到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '病假'}" value="病假">病假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '事假'}" value="事假">事假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '旷课'}" value="旷课">旷课</option>
+                    </select>
+                </div>
+                <div  style="margin-top: 10px;color: #E76108" th:if="${stuItem.attendanceResult eq '病假' or stuItem.attendanceResult eq '事假'}">
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuItem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select style="border: none">
+                        <option th:selected="${stuItem.attendanceResult eq '未签到'}" value="未签到">未签到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '正常'}" value="正常">正常</option>
+                        <option th:selected="${stuItem.attendanceResult eq '迟到'}" value="迟到">迟到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '病假'}" value="病假">病假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '事假'}" value="事假">事假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '旷课'}" value="旷课">旷课</option>
+                    </select>
+                </div>
+                 <div  style="margin-top: 10px;color: #3e8f3e" th:if="${stuItem.attendanceResult eq '正常'}">
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuItem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuItem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select th:id="${stuItem.sNo}" style="border: none">
+                        <option selected="selected" value="未签到">未签到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '正常'}" value="正常">正常</option>
+                        <option th:selected="${stuItem.attendanceResult eq '迟到'}" value="迟到">迟到</option>
+                        <option th:selected="${stuItem.attendanceResult eq '病假'}" value="病假">病假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '事假'}" value="事假">事假</option>
+                        <option th:selected="${stuItem.attendanceResult eq '旷课'}" value="旷课">旷课</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+        </span>
+    </div>
+</div>
+<div id="noAttendance" th:if="${attendnceStuList.isEmpty()&& flag ne 1}" class="row">
+    <!--/*@thymesVar id="CourseStuList" type="List"*/-->
+    <h4 style="color: red;padding-left: 20px">考勤尚未开始</h4>
+    <div th:each="stuitem,start:${CourseStuList}" class="col-sm-2">
+        <span id="stu" th:onclick="getStuInfo([[${CourseStuList}]],[[${stuitem}]],[[${start}]],[[${attendanceResult+'-modal'}]])">
+        <ul class="list-group" style="border:1px solid transparent;margin-top: 10px">
+            <li class="list-group-item" style="border: none">
+                <img src="/statics/img/zjz.JPG" width="100%">
+            </li>
+            <li class="list-group-item" style="text-align: center;margin-top: -15px;border: none">
+                <div id="StuInfo2">
+                    <span style="font-weight: bold;font-size: 20px" th:text="${stuitem.sName}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuitem.sNo}"></span> <br>
+                    <span style="font-weight: bold" th:text="${stuitem.className}"></span>
+                    <br>
+                    <span style="font-weight: bold">状态:</span>
+                    <select th:id="${stuitem.sNo}" style="border: none">
+                        <option  value="未签到">未签到</option>
+                        <option  value="正常">正常</option>
+                        <option  value="迟到">迟到</option>
+                        <option  value="病假">病假</option>
+                        <option  value="事假">事假</option>
+                        <option  value="旷课">旷课</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+        </span>
+    </div>
+</div>
+<div class="cao">
+<div class="modal fade" th:id="${attendanceResult+'-modal'}"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="true">
+    <div class="modal-dialog" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">课堂考勤</h4>
+                <input class="modal-title" style="display: none" id="isAttendance"/>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-5">
+                        <img th:id="${attendanceResult+'-modalimg'}" src="/statics/img/zjz.JPG" width="80%">
+                    </div>
+                    <div class="col-sm-5">
+                        <h2 th:id="${attendanceResult+'-modalname'}"></h2>
+                        <span th:id="${attendanceResult+'-modalindex'}" style="display: none"></span>
+                        <span th:id="${attendanceResult+'-modalsNo'}">学号:</span><br><br>
+                        <span th:id="${attendanceResult+'-modaldept'}">院系</span><br><br>
+                        <span th:id="${attendanceResult+'-modalclass'}">班级</span><br><br>
+                        <span >状态：</span>
+                        <select class="selectpicker" th:id="${attendanceResult+'-modalstate'}">
+                            <option value="未签到">未签到</option>
+                            <option value="正常">正常</option>
+                            <option  value="迟到">迟到</option>
+                            <option  value="病假">病假</option>
+                            <option  value="事假">事假</option>
+                            <option  value="旷课">旷课</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="row">
+                    <br>
+                </div>
+                <div class="modal-footer">
+                        <button type="button" th:onclick="getUpStu()" class="btn btn-primary">上一个</button>
+                    <button type="button" th:onclick="modalHide1()" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" th:onclick="getNextStu()" class="btn btn-primary">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+</div>
+<script th:inline="javascript">
+    if (sessionStorage.getItem("IsManual")=='yes'){
+        autoGetStuInfo([[${attendnceStuList}]],[[${attendanceResult+'-modal'}]]);
+    }
+    function modalHide1(){
+            $('#' + getResultId).on('hide.bs.modal', function () {
+                // 执行一些动作...
+                if ([[${Ishistory}]]=='IsHistory') {
+
+                }else {
+                    alert('1111');
+                    // window.location.reload();
+                }
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.CourseDao">
+    <resultMap id="CourseMap" type="ljd.classmanager.Entity.CourseEntity">
+        <id property="courseCode" column="course_code"/>
+        <id property="courseType" column="course_type"/>
+        <id property="courseName" column="course_name"/>
+        <id property="userCode" column="user_code"/>
+        <id property="courseTerm" column="course_term"/>
+        <id property="courseState" column="course_state"/>
+        <collection property="classes" ofType="ljd.classmanager.Entity.CourseOfClassEntity">
+            <id property="classCode" column="class_code"/>
+            <id property="deptId" column="dept_id"/>
+            <id property="allClass" column="all_class"/>
+            <result property="classNickname" column="class_nickname"/>
+        </collection>
+    </resultMap>
+    <select id="getCoursesList" parameterType="String" resultMap="CourseMap">
+        select *,GROUP_CONCAT(b.class_code) AS all_class from course a,course_of_class b
+        where a.course_code=b.course_code
+        <if test="userCode!=null and userCode!=''">
+            AND a.user_code=#{userCode}
+        </if>
+        <if test="courseState!=null and courseState!=''">
+            AND a.course_state=#{courseState}
+        </if>
+        group by b.class_nickName,a.course_code
+    </select>
+    <select id="getStuNum" parameterType="String" resultType="Integer">
+        select COUNT(*) from course_of_stu
+        where course_code=#{courseCode} and class_nickname=#{classNickName}
+    </select>
+    <insert id="addCourse">
+        INSERT INTO course (course_code, course_type,course_name,user_code,course_term,course_state)
+        VALUES (#{courseCode}, #{courseType},#{courseName},#{userCode},#{courseTerm},#{courseState})
+    </insert>
+    <update id="updateCourse" parameterType="ljd.classmanager.Entity.CourseEntity" >
+        update course set course_code=#{courseCode},course_type=#{courseType},course_name=#{courseName},course_term=#{courseTerm}
+        where course_code=#{courseCode_1};
+    </update>
+    <select id="getCoursesList" parameterType="String" resultMap="CourseMap">
+        select *,GROUP_CONCAT(b.class_code) AS all_class from course a,course_of_class b
+        where a.course_code=b.course_code
+        <if test="userCode!=null and userCode!=''">
+            AND a.user_code=#{userCode}
+        </if>
+        <if test="courseState!=null and courseState!=''">
+            AND a.course_state=#{courseState}
+        </if>
+        group by b.class_nickName,a.course_code
+        ORDER BY a.course_code
+    </select>
+    <select id="getCoursesListByterm" parameterType="String" resultMap="CourseMap">
+        select *,GROUP_CONCAT(b.class_code) AS all_class from course a,course_of_class b
+        where a.course_code=b.course_code
+        <if test="userCode!=null and userCode!=''">
+            AND a.user_code=#{userCode}
+        </if>
+        <if test="courseState!=null and courseState!=''">
+            AND a.course_state=#{courseState}
+        </if>
+        <if test="courseTerm!=null and courseTerm!=''">
+            AND a.course_term like concat(concat('%',#{courseTerm}),'%')
+        </if>
+        group by b.class_nickName,a.course_code
+        ORDER BY a.course_code
+    </select>
+    <select id="getCourseBySno" parameterType="String" resultType="ljd.classmanager.Entity.CourseEntity">
+        SELECT * FROM course a,course_of_stu b WHERE a.course_code=b.course_code AND b.s_no=#{Sno} and a.course_state=#{courseState}
+    </select>
+</mapper>

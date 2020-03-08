@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.AttendanceDao">
+    <insert id="addAttendance" parameterType="ljd.classmanager.Entity.AttendanceEntity">
+        insert into attendance(attendance_id,course_code,s_no,attendance_class,attendance_type)
+        values (#{attendanceId},#{courseCode},#{sNo},#{attendanceClass},#{attendanceType})
+    </insert>
+    <update id="signIn" parameterType="ljd.classmanager.Entity.AttendanceEntity">
+        update attendance
+        set attendance_result=#{attendanceResult}
+        where attendance_id=#{attendanceId} and s_no=#{sNo}
+    </update>
+    <select id="listHasSign" parameterType="ljd.classmanager.Entity.AttendanceEntity" resultType="ljd.classmanager.Entity.AttendanceEntity">
+        select * from classmanager.attendance where attendance_id=#{attendanceId} and s_no=#{sNo} and attendance_result!='未签到';
+    </select>
+    <update id="updateAttendance" parameterType="ljd.classmanager.Entity.AttendanceEntity">
+        update attendance
+        set attendance_result=#{attendanceResult}
+        where attendance_id=#{attendanceId} and s_no=#{sNo}
+    </update>
+</mapper>

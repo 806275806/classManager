@@ -1,0 +1,38 @@
+.a1{
+         position:relative;//可以不设置
+   }
+.a1  img{
+         position:absolute;
+         z-index:-1; //主要试这个属性 -1
+   }
+.a-forMore{
+    font-weight: bolder;
+    color: #0072bc;
+}
+.row-position{
+	padding-left: 20px;padding-right: 20px;
+}
+.li-bk{
+	background: url(../img/small/06.png);
+	background-size: cover;
+}
+.label-modal{
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    /* background-color: #eee; */
+    border: 0px solid #ccc;
+    border-radius: 4px;
+}
+.input-modal{
+    width:16%;height: 34px;border-radius: 4px;border: 1px solid #ccc;padding: 6px 12px;
+}
+.input-modal-2{
+     width: 80px;height: 34px;border-radius: 4px;border: 1px solid #ccc;padding: 6px 12px;
+}
+.input-modal-3{
+    width: 80%;height: 34px;border-radius: 4px;border: 1px solid #ccc;padding: 6px 12px;
+}

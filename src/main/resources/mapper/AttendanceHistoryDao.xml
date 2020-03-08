@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.AttendanceHistoryDao">
+    <!--这是获取考勤记录到考勤的sql-->
+    <select id="getAttendanceHistory" parameterType="ljd.classmanager.Entity.AttendanceHistoryEntity" resultType="ljd.classmanager.Entity.AttendanceHistoryEntity">
+select * from attendance_history a,attendance b,course_of_stu c
+        where a.attendance_id=b.attendance_id and b.course_code=c.course_code
+        and b.course_code=#{courseCode} and a.attendance_state=#{attendanceState}
+        <if test="classnickName!=null and classnickName!=''">
+            and c.class_nickname=#{classnickName}
+        </if>
+        <if test="attendanceType!=null and attendanceType!=''">
+            and a.attendance_type=#{attendanceType}
+        </if>
+    </select>
+    <!--这是获取到考勤历史的sql-->
+    <select id="getHistory" parameterType="ljd.classmanager.Entity.AttendanceHistoryEntity" resultType="ljd.classmanager.Entity.AttendanceHistoryEntity">
+        SELECT b.*,a.course_code FROM attendance a,attendance_history b,course_of_stu c
+        WHERE a.attendance_id=b.attendance_id AND a.course_code=c.course_code and a.s_no=c.s_no
+        and a.course_code=#{courseCode} and b.attendance_state='已结束'
+        <if test="classnickName!=null and classnickName!=''">
+            and c.class_nickname=#{classnickName}
+        </if>
+        <if test="dateOne!=null and dateOne!='' and dateTwo!=null and dateTwo!=''">
+            and b.attendance_time between #{dateOne} and #{dateTwo}
+        </if>
+        GROUP BY b.attendance_id
+        order by b.attendance_time desc
+        LIMIT #{offset},#{pageNumber}
+    </select>
+    <select id="getHistoryCount" parameterType="ljd.classmanager.Entity.AttendanceHistoryEntity" resultType="Integer">
+        SELECT COUNT(*) FROM(
+        SELECT count(*) FROM attendance a,attendance_history b,course_of_stu c
+        WHERE a.attendance_id=b.attendance_id AND a.course_code=c.course_code and a.s_no=c.s_no
+        and a.course_code=#{courseCode} and b.attendance_state='已结束'
+        <if test="classnickName!=null and classnickName!=''">
+            and c.class_nickname=#{classnickName}
+        </if>
+        <if test="dateOne!=null and dateOne!='' and dateTwo!=null and dateTwo!=''">
+            and b.attendance_time between #{dateOne} and #{dateTwo}
+        </if>
+        GROUP BY b.attendance_id
+        order by b.attendance_time desc
+        ) as getsum
+    </select>
+    <insert id="addAttendanceHistory" parameterType="ljd.classmanager.Entity.AttendanceHistoryEntity">
+        insert into attendance_history(attendance_id)
+        values (#{attendanceId})
+    </insert>
+    <insert id="updateState" parameterType="ljd.classmanager.Entity.AttendanceHistoryEntity">
+        update attendance_history
+        set attendance_state='已结束'
+        <if test="stateOne=='未签到'">
+            ,attendance_Nosign=attendance_nosign+1
+        </if>
+        <if test="stateOne=='正常'">
+            ,attendance_signin=attendance_signin+1
+        </if>
+        <if test="stateOne=='迟到'">
+            ,attendance_late=attendance_late+1
+        </if>
+        <if test="stateOne=='病假' or stateOne=='事假'">
+            ,attendance_leave=attendance_leave+1
+        </if>
+        <if test="stateOne=='旷课'">
+            ,attendance_absent=attendance_absent+1
+        </if>
+        <if test="stateTwo=='未签到'">
+            ,attendance_Nosign=attendance_nosign-1
+        </if>
+        <if test="stateTwo=='正常'">
+            ,attendance_signin=attendance_signin-1
+        </if>
+        <if test="stateTwo=='迟到'">
+            ,attendance_late=attendance_late-1
+        </if>
+        <if test="stateTwo=='病假' or stateTwo=='事假'">
+            ,attendance_leave=attendance_leave-1
+        </if>
+        <if test="stateTwo=='旷课'">
+            ,attendance_absent=attendance_absent-1
+        </if>
+        where attendance_id=#{attendanceId}
+    </insert>
+</mapper>

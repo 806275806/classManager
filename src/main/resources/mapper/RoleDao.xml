@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ljd.classmanager.Dao.RoleDao">
+    <insert id="addRole" parameterType="ljd.classmanager.Entity.UserEntity">
+        insert into user_role(user_code,role_id)  values (#{userCode},#{haveRoleId})
+    </insert>
+    <select id="getRoleByUserCode" resultType="ljd.classmanager.Entity.RoleEntity">
+        select * from user_role where user_code=#{userCode}
+    </select>
+    <delete id="delUser_Role">
+        delete from user_role where user_code=#{userCode}
+        <if test="roleId!=0">
+        and role_id=#{roleId}
+    </if>
+    </delete>
+</mapper>

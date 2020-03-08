@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="/statics/bootstrap-3.3.7-dist/css/bootstrap.css" />
+		<link rel="stylesheet" href="/statics/css/bootstrap-treeview.css" />
+		<link rel="stylesheet" href="/statics/css/index.css">
+		<link rel="stylesheet" href="/statics/bootstrap-table-master/dist/bootstrap-table.css">
+		<link rel="stylesheet" href="/statics/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css">
+		<link rel="stylesheet" href="/statics/bootstrap-select-1.13.9/dist/css/bootstrap-select.min.css">
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/statics/js/bootstrap-treeview.js" ></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8" charset="UTF-8"></script>
+		<script type="text/javascript" src="/statics/bootstrap-table-master/dist/bootstrap-table.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+		<script type="text/javascript" src="/statics/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="/statics/js/getSelect.js"></script>
+		<script type="text/javascript" src="/statics/js/data.js" ></script>
+		<title></title>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row row-position">
+				<div class="col-md-2">
+					<h4>基础数据管理</h4>
+				</div>
+			</div>
+			<hr style="margin-top: 1%;" />
+			<div class="row">
+			<div class="row">
+				<div class="col-sm-3">
+					<a onclick="DealDept(1)" style="padding-left: 3%;" data-toggle="modal" >添加院系<span class="glyphicon glyphicon-plus"></span></a>
+					<a onclick="DealMajor(1)" style="float: right">添加专业<span class="glyphicon glyphicon-plus"></span></a>
+					<div id="tree" class="row treeview" ></div>
+				</div>
+				<div class="col-sm-9" >
+					<form id="search-bar" class="form-inline">
+						<span style="font-size: 15px;">年级：</span>
+						<input type="text" id="classGrade" name="classGrade" style="width: 8%;height: 34px;">&nbsp;
+						<span style="font-size: 15px">院系：</span>
+						<select id="deptSel" class="selectpicker" onchange="loadMajor_select()">
+						</select>&nbsp;
+						<span style="font-size: 15px">专业：</span>
+						<select id="majorSel" class="selectpicker sel-width">
+
+						</select>
+						<span style="font-size: 15px">班级：</span>
+						<input type="text" id="className" name="className" style="width: 17%;height: 34px;">&nbsp;
+						<button type="button" id="search_btn" class="btn btn-default" style="color: #FFFFFF; background: #428bca">查询</button>
+					</form>
+					<table id="class-tab" class="table table-bordered table-striped"></table>
+					<div id="class-tab-tool">
+						<button type="button" id="add_btn" onclick="DealClass(1)" class="btn btn-default glyphicon glyphicon-plus" style="color: #FFFFFF; background: #428bca">&ensp;添加</button>
+						<button type="button" id="delete_btn" onclick="table_select()" class="btn btn-default glyphicon glyphicon-trash" style="color: #FFFFFF; background: #F73809">&ensp;批量删除</button>
+					</div>
+				</div>
+			</div>
+			</div>
+			<!--添加、修改院系的模态框-->
+			<div class="modal fade" id="DeptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 id="addDept_h4" class="modal-title">添加院系</h4>
+							<h4 id="updateDept_h4" class="modal-title" style="display: none">编辑院系</h4>
+						</div>
+						<div class="modal-body">
+							<div class="input-group">
+								<span class="input-group-addon">院系名称</span>
+								<input type="text" class="form-control" id="deptName" placeholder="请输入院系名称" aria-describedby="sizing-addon2">
+							</div>
+						</div>
+						<div id="addDept_footer" class="modal-footer">
+							<button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button"  class="btn btn-primary" onclick="AddOrUpdateDept(1)">添加</button>
+						</div>
+						<div id="updateDept_footer" class="modal-footer" style="display: none">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" onclick="AddOrUpdateDept(2)">修改</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+            <!--添加、修改专业的模态框-->
+            <div class="modal fade" id="MajorModal"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 id="AddMajor_h4" class="modal-title" >添加专业</h4>
+                            <h4 id="UpdateMajor_h4" class="modal-title" style="display: none">修改专业</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form id="Major-form">
+								<div class="input-group">
+									<span class="input-group-addon">所属院系</span>
+								<select id="Dept_sel" class="form-control" name="deptId">
+									<option value=""  disabled selected hidden>请选择所属院系</option>
+								</select>
+								</div><br>
+								<div class="input-group">
+									<span class="input-group-addon">专业代码</span>
+									<input type="text" class="form-control" id="MajorCode" name="majorCode" placeholder="请输入专业代码" aria-describedby="sizing-addon2">
+								</div><br>
+                                <div class="input-group">
+                                    <span class="input-group-addon">专业名称</span>
+                                    <input type="text" class="form-control" id="MajorName" name="majorName" placeholder="请输入专业名称" aria-describedby="sizing-addon2">
+                                </div>
+                            </form>
+                        </div>
+                        <div id="AddMajor_footer" class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" onclick="addMajor()" class="btn btn-primary">添加</button>
+                        </div>
+						<div id="UpdateMajor_footer" class="modal-footer" style="display: none">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button" onclick="updateMajor()" class="btn btn-primary">修改</button>
+						</div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+			<!--添加、修改班级的模态框-->
+			<div class="modal fade" id="ClassModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 id="addClass_h4" class="modal-title">添加班级</h4>
+							<h4 id="updateClass_h4" class="modal-title" style="display: none">编辑班级</h4>
+						</div>
+						<div class="modal-body">
+							<form id="Class_form">
+								<input id="Id" name="id" style="display: none;">
+							<div class="input-group">
+								<span class="input-group-addon">班级代码</span>
+								<input type="text" class="form-control" id="ClassCode" name="classCode" readonly placeholder="内容根据以下表单选择填充" aria-describedby="sizing-addon2">
+							</div><br>
+							<div class="input-group">
+								<span class="input-group-addon">所属年级</span>
+								<input type="text" class="form-control" id="ClassGrade-Modal" name="classGrade" onchange="setClassCode('Grade')"  aria-describedby="sizing-addon2">
+							</div><br>
+							<div class="input-group">
+								<span class="input-group-addon">所属院系</span>
+								<select id="deptSel_Modal" class="form-control" name="deptId"  onchange="deptChange()"/>
+							</div><br>
+							<div class="input-group">
+								<span class="input-group-addon">所属专业</span>
+								<select id="majorSel_Modal" class="form-control" onchange="setClassCode('Major')" name="majorCode" />
+							</div><br>
+							<div class="input-group">
+								<span class="input-group-addon">班级名称</span>
+								<div class="form-control">
+									<div id="showclassName" style="display: none">
+									<span id="ClassName_modal" contenteditable="true"></span>
+									<input id="ClassNum" type="number" value="" min="1" max="50" step="1" onchange="setClassCode('ClassNum')" style="width: 40px">
+									<span>班</span>
+									</div>
+								</div>
+							</div>
+							<div class="input-group">
+								<input id="classNameform" name="className" style="display: none;">
+							</div></form>
+					</div>
+						<div id="addClass_footer" class="modal-footer">
+							<button type="button"  class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button"  class="btn btn-primary" onclick="addClass()">添加</button>
+						</div>
+						<div id="updateClass_footer" class="modal-footer" style="display: none">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="button" class="btn btn-primary" onclick="updateClass()">修改</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal -->
+			</div>
+		</div>
+	</body>
+</html>
